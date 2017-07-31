@@ -3,6 +3,9 @@ package com.mirka.app.studenttoolboxrevised;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -20,6 +24,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mirka.app.studenttoolboxrevised.data.MoodleContract;
+import com.mirka.app.studenttoolboxrevised.data.MoodleDbHelper;
+import com.mirka.app.studenttoolboxrevised.utils.DatabaseUtils;
 import com.mirka.app.studenttoolboxrevised.utils.MoodleUtils;
 
 /**
@@ -127,7 +134,7 @@ public class MoodleLoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(url, email, password);
+            mAuthTask = new UserLoginTask(this, url, email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -176,6 +183,14 @@ public class MoodleLoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -197,8 +212,10 @@ public class MoodleLoginActivity extends AppCompatActivity {
         private final String mLogin;
         private final String mPassword;
         private String mToken;
+        private Context mContext;
 
-        UserLoginTask(String url, String login, String password) {
+        UserLoginTask(Context context, String url, String login, String password) {
+            mContext = context;
             mURL = url;
             mLogin = login;
             mPassword = password;
@@ -217,7 +234,10 @@ public class MoodleLoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (token != null) {
-                Toast.makeText(MoodleLoginActivity.this, token, Toast.LENGTH_SHORT).show();
+                MoodleDbHelper dbHelper = new MoodleDbHelper(mContext);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                long res = db.insert(MoodleContract.UserEntry.TABLE_NAME, null, DatabaseUtils.getUserCV(mURL, mLogin, mPassword, token));
+                Toast.makeText(mContext, String.valueOf(res), Toast.LENGTH_SHORT).show();
                 //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
