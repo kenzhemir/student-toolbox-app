@@ -1,3 +1,18 @@
 <resources>
+    <!-- App name -->
     <string name="app_name">Student Toolbox</string>
+
+
+    <!-- Main Activity sections names-->
+    <string name="section_name_courses">Courses</string>
+    <string name="section_name_schedule">Schedule</string>
+    <string name="section_name_notepad">Notepad</string>
+    <string name="section_name_recorder">Recorder</string>
+    <string name="section_name_grades">Grades</string>
+    <string name="section_name_gpacalc">GPA calculator</string>
+    <string name="section_name_timer">Timer</string>
+    <string name="section_name_chat">Chat</string>
+
+
+
 </resources>
