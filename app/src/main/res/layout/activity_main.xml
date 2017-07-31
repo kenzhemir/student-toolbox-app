@@ -1,18 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.mirka.app.studenttoolboxrevised.MainActivity">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <TableLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:stretchColumns="*">
 
-</android.support.constraint.ConstraintLayout>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_courses"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_courses"
+                    android:onClick="sectionOnClickListener"
+                    android:text="@string/section_name_courses"
+                    app:layout_constraintHorizontal_bias="0.6" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_schedule"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_schedule"
+                    android:text="@string/section_name_schedule"
+                    app:layout_constraintHorizontal_bias="0.4" />
+            </android.support.constraint.ConstraintLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_notepad"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_notepad"
+                    android:text="@string/section_name_notepad"
+                    app:layout_constraintHorizontal_bias="0.6" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_recorder"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_recorder"
+                    android:text="@string/section_name_recorder"
+                    app:layout_constraintHorizontal_bias="0.4" />
+
+            </android.support.constraint.ConstraintLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_grades"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_grades"
+                    android:text="@string/section_name_grades"
+                    app:layout_constraintHorizontal_bias="0.6" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_calculator"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_calculator"
+                    android:text="@string/section_name_gpacalc"
+                    app:layout_constraintHorizontal_bias="0.4" />
+            </android.support.constraint.ConstraintLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="36dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_timer"
+                    style="@style/Thumbnail"
+                    android:drawableTop="@drawable/thumbnail_timer"
+                    android:text="@string/section_name_timer"
+                    app:layout_constraintHorizontal_bias="0.6" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="36dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/tv_thumbnail_chat"
+                    style="@style/Thumbnail"
+                    android:layout_marginBottom="36dp"
+                    android:drawableTop="@drawable/thumbnail_chat"
+                    android:text="@string/section_name_chat"
+                    app:layout_constraintHorizontal_bias="0.4" />
+            </android.support.constraint.ConstraintLayout>
+        </TableRow>
+    </TableLayout>
+</ScrollView>
