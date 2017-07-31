@@ -1,5 +1,6 @@
 package com.mirka.app.studenttoolboxrevised;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +15,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sectionOnClickListener(View view){
-        Toast.makeText(this, view.getId() + " clicked", Toast.LENGTH_SHORT).show();
+        int view_id = view.getId();
+
+        if (view_id == R.id.tv_thumbnail_courses){
+            startActivity(new Intent(this, MoodleLoginActivity.class));
+        } else {
+            Toast.makeText(this, view.getId() + " clicked", Toast.LENGTH_SHORT).show();
+        }
     }
 }
