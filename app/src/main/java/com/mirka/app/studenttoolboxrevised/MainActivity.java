@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             if (isEnabled && !isLoggedIn()) {
                 startActivity(new Intent(this, MoodleLoginActivity.class));
             } else {
-                startActivity(new Intent(this));
+                startActivity(new Intent(this, CoursesSectionActivity.class));
             }
         } else {
             Toast.makeText(this, view.getId() + " clicked", Toast.LENGTH_SHORT).show();
