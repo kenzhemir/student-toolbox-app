@@ -1,7 +1,9 @@
 package com.mirka.app.studenttoolboxrevised;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,12 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void sectionOnClickListener(View view){
         int view_id = view.getId();
-
+        boolean isEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getResources().getString(R.string.pref_moodle_enabled_key), getResources().getBoolean(R.bool.pref_enable_moodle_default));
         if (view_id == R.id.tv_thumbnail_courses){
-            if (!isLoggedIn()) {
+            if (isEnabled && !isLoggedIn()) {
                 startActivity(new Intent(this, MoodleLoginActivity.class));
             } else {
-                Toast.makeText(this, "You're logged in", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this));
             }
         } else {
             Toast.makeText(this, view.getId() + " clicked", Toast.LENGTH_SHORT).show();
