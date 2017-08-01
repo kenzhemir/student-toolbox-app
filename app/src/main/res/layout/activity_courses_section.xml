@@ -1,9 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.mirka.app.studenttoolboxrevised.CoursesSectionActivity">
+    android:background="@color/background_gray">
+    <!--android:nestedScrollingEnabled="false"-->
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/fragment_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1000dp"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        tools:context="com.mirka.example.studenttoolbox.fragment.CourseListFragment">
+
+
+        <TextView
+            style="@style/section_expansion_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/section_expansion_current_courses" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_current_courses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+        <TextView
+            android:id="@+id/tv_previous_courses_group_text"
+            style="@style/section_expansion_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/ic_expand_more_gray_24dp"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/ic_expand_more_gray_24dp"
+            android:gravity="center_vertical"
+            android:onClick="expandPreviousCourses"
+            android:text="@string/section_expanstion_courses_previous" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_previous_courses"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

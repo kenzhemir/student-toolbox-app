@@ -2,6 +2,7 @@ package com.mirka.app.studenttoolboxrevised.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mirka.example.studenttoolbox.R;
+import com.mirka.app.studenttoolboxrevised.R;
+import com.mirka.app.studenttoolboxrevised.data.MoodleContract;
+
 
 /**
  *      This adapter binds the recycler view for displaying the list of courses on CourseListFragment activity
@@ -19,12 +22,13 @@ import com.mirka.example.studenttoolbox.R;
 public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.CourseListViewHolder> {
 
     private Context mContext;
-    private String[] mData;
+    private Cursor mData;
     private CourseListAdapterOnClickHandler mClickHandler;
+    private int mCourseNameIndex;
 
 
     public interface CourseListAdapterOnClickHandler {
-        public void onClick();
+        public void onClick(int position);
     }
 
     /**
@@ -48,7 +52,7 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
      */
     @Override
     public CourseListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_courses, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_course, parent, false);
         CourseListViewHolder viewHolder = new CourseListViewHolder(view);
         return viewHolder;
     }
@@ -76,7 +80,7 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
         if (mData == null){
             return 0;
         }
-        return mData.length;
+        return mData.getCount();
     }
 
     /**
@@ -103,12 +107,16 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
          * @param position order number of the item in the dataset
          */
         public void bind(int position) {
-            mCourseName.setText(mData[position]);
+            mData.moveToPosition(position);
+            try {
+                mCourseName.setText(mData.getString(mCourseNameIndex));
+            } catch (Exception ignored){
+            }
         }
 
         @Override
         public void onClick(View v) {
-            mClickHandler.onClick();
+            mClickHandler.onClick(mData.getPosition());
         }
     }
 
@@ -117,8 +125,9 @@ public class CourseListAdapter extends RecyclerView.Adapter<CourseListAdapter.Co
      * This method allows to change dataset to be displayed in the RecyclerView
      * @param data new dataset
      */
-    public void setData(String[] data){
+    public void setData(Cursor data){
         mData = data;
+        mCourseNameIndex = data.getColumnIndex(MoodleContract.CourseEntry.COLUMN_SHORTNAME);
         notifyDataSetChanged();
     }
 }

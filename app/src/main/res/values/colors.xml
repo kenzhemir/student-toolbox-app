@@ -3,4 +3,9 @@
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
     <color name="colorAccent">#FF4081</color>
+
+
+    <color name="section_expansion_text_color">#606060</color>
+    <color name="background_gray">#EFEFEF</color>
+    <!--<color name="textColor">#000000</color>-->
 </resources>

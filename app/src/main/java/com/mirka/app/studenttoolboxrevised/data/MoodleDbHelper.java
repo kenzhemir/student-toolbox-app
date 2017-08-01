@@ -15,7 +15,7 @@ import com.mirka.app.studenttoolboxrevised.utils.MoodleUtils;
 public class MoodleDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "moodle.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public MoodleDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -24,7 +24,7 @@ public class MoodleDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String SQL_CREATE_TABLE_QUERY = "CREATE TABLE " +
+        final String SQL_CREATE_USER_TABLE_QUERY = "CREATE TABLE " +
                 MoodleContract.UserEntry.TABLE_NAME + " (" +
                 MoodleContract.UserEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MoodleContract.UserEntry.COLUMN_MOODLE_URL + " TEXT NOT NULL, " +
@@ -32,7 +32,14 @@ public class MoodleDbHelper extends SQLiteOpenHelper {
                 MoodleContract.UserEntry.COLUMN_PASSWORD + " TEXT NOT NULL, " +
                 MoodleContract.UserEntry.COLUMN_TOKEN + " TEXT NOT NULL" +
                 ");";
-        db.execSQL(SQL_CREATE_TABLE_QUERY);
+        db.execSQL(SQL_CREATE_USER_TABLE_QUERY);
+        final String SQL_CREATE_COURSES_TABLE_QUERY = "CREATE TABLE " +
+                MoodleContract.CourseEntry._ID + " INTEGER PRIMARY KEY AUTINCREMENT, " +
+                MoodleContract.CourseEntry.COLUMN_MOODLE_ID + " INTEGER UNIQUE, " +
+                MoodleContract.CourseEntry.COLUMN_SHORTNAME + " TEXT NOT NULL, " +
+                MoodleContract.CourseEntry.COLUMN_FULLNAME + " TEXT NOT NULL" +
+                MoodleContract.CourseEntry.COLUMN_IS_ACTIVE + " INTEGER NOT NULL" +
+                ");";
     }
 
     @Override

@@ -4,10 +4,6 @@ import android.content.ContentValues;
 
 import com.mirka.app.studenttoolboxrevised.data.MoodleContract;
 
-/**
- * Created by Miras on 7/31/2017.
- */
-
 public class DatabaseUtils {
 
     public static ContentValues getUserCV(String url, String username, String password, String token) {
@@ -18,4 +14,5 @@ public class DatabaseUtils {
         cv.put(MoodleContract.UserEntry.COLUMN_TOKEN, token);
         return cv;
     }
+
 }

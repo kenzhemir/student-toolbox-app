@@ -21,4 +21,15 @@
         <item name="layout_constraintTop_toTopOf">parent</item>
     </style>
 
+
+    <style name="section_expansion_text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/section_expansion_text_color</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_margin">40dp</item>
+
+    </style>
+
+
 </resources>
+
