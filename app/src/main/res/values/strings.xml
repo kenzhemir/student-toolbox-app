@@ -37,11 +37,12 @@
     <string name="pref_moodle_enabled_on">Enabled</string>
     <string name="pref_moodle_enabled_off">Disabled</string>
     <string name="pref_moodle_enabled_label">Enable moodle</string>
-    <string name="menu_item_settings">Settings</string>
+    <string name="aciton_settings">Settings</string>
 
 
     <!-- Strings related to Courses section -->
     <string name="section_expansion_current_courses">Current courses</string>
     <string name="section_expanstion_courses_previous">Previous courses</string>
+    <string name="action_sync">Synchronize</string>
 
 </resources>
