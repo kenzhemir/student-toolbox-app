@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 
@@ -272,6 +273,7 @@ public class MoodleLoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (response == null) {
+                startActivity(new Intent(mContext, CoursesSectionActivity.class));
                 finish();
             } else {
                 int status = 0;

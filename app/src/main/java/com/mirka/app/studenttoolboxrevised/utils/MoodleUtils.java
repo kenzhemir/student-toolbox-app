@@ -1,7 +1,11 @@
 package com.mirka.app.studenttoolboxrevised.utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Created by Miras on 7/31/2017.
@@ -15,7 +19,7 @@ public class MoodleUtils {
     public static final int INVALID_TOKEN = 202;
     public static final int GENERIC_ERROR = 203;
 
-    public static JSONObject getMoodleResponse(String moodleUrl, String token, String function, String urlParams){
+    public static JSONObject getMoodleResponse(String moodleUrl, String token, String function, String urlParams) {
 
         String serverurl = moodleUrl + "/webservice/rest/server.php?wstoken=" + token + "&wsfunction=" + function + "&moodlewsrestformat=json" + urlParams;
         JSONObject jsonObject = NetworkUtils.getJsonResponseFromURL(serverurl);
@@ -42,7 +46,6 @@ public class MoodleUtils {
 
 
     /**
-     *
      * This function used to get a token from moodle-based website
      *
      * @param moodleURI
@@ -50,7 +53,7 @@ public class MoodleUtils {
      * @param password
      * @return
      */
-    public static JSONObject getToken(String moodleURI, String username, String password){
+    public static JSONObject getToken(String moodleURI, String username, String password) {
 
         String url = "https://" + moodleURI + "/login/token.php?username=" + username + "&password=" + password + "&service=moodle_mobile_app";
         JSONObject jsonObject = NetworkUtils.getJsonResponseFromURL(url);
@@ -68,4 +71,21 @@ public class MoodleUtils {
         return getMoodleResponse(moodleUrl, token, "moodle_webservice_get_siteinfo", "");
     }
 
+    public static JSONArray getUserCourses(String moodleUrl, String user_id, String token) {
+        String urlParams;
+        try {
+            urlParams = "userid=" + URLEncoder.encode(user_id, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            urlParams = "userid="+user_id;
+        }
+        String function = "moodle_enrol_get_users_courses";
+        JSONObject response =  getMoodleResponse(moodleUrl, token, function, urlParams);
+        try {
+            return response.getJSONArray("list");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

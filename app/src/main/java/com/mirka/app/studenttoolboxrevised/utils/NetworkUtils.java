@@ -1,5 +1,6 @@
 package com.mirka.app.studenttoolboxrevised.utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,8 +24,31 @@ public class NetworkUtils {
     public static final int CONNECTION_ERROR = 101;
 
     public static JSONObject getJsonResponseFromURL(String url){
-        String responseBody;
+        String responseBody = getResponseFromUrl(url);
+
         JSONObject jObject = null;
+        JSONArray jsonArray = null;
+        if (responseBody == null) {
+            return ErrorUtils.buildErrorMessage(CONNECTION_ERROR, "Error connecting to server");
+        }
+        try {
+            jsonArray = new JSONArray(responseBody);
+            jObject = new JSONObject();
+            jObject.put("list", jsonArray);
+        } catch (JSONException e) {
+            try {
+                jObject = new JSONObject(responseBody);
+            } catch (JSONException e1) {
+                e.printStackTrace();
+                return ErrorUtils.buildErrorMessage(INVALID_NETWORK_RESPONSE, e1.getMessage());
+            }
+        }
+
+        return jObject;
+    }
+
+    public static String getResponseFromUrl(String url) {
+        String responseBody;
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -42,19 +66,14 @@ public class NetworkUtils {
             ResponseBody rb = response.body();
             if (rb != null) {
                 responseBody = rb.string();
-                jObject = new JSONObject(responseBody);
             } else {
                 throw new IOException("no response");
             }
         } catch (IOException e) {
-            jObject = ErrorUtils.buildErrorMessage(CONNECTION_ERROR, e.getMessage());
-            e.printStackTrace();
-        } catch (JSONException e) {
-            jObject = ErrorUtils.buildErrorMessage(INVALID_NETWORK_RESPONSE, e.getMessage());
+            responseBody = null;
             e.printStackTrace();
         }
-
-        return jObject;
+        return responseBody;
     }
 
 

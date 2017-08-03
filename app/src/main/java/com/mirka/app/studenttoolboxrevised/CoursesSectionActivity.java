@@ -1,5 +1,6 @@
 package com.mirka.app.studenttoolboxrevised;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.LoaderManager;
@@ -20,10 +21,13 @@ import android.widget.Toast;
 import com.mirka.app.studenttoolboxrevised.adapter.CourseListAdapter;
 import com.mirka.app.studenttoolboxrevised.data.MoodleContract;
 import com.mirka.app.studenttoolboxrevised.data.MoodleDbHelper;
+import com.mirka.app.studenttoolboxrevised.utils.DatabaseUtils;
 import com.mirka.app.studenttoolboxrevised.utils.MoodleUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 public class CoursesSectionActivity extends AppCompatActivity implements CourseListAdapter.CourseListAdapterOnClickHandler, LoaderManager.LoaderCallbacks<List<Course>> {
@@ -146,7 +150,7 @@ public class CoursesSectionActivity extends AppCompatActivity implements CourseL
 
                 SQLiteDatabase db = (new MoodleDbHelper(getContext())).getReadableDatabase();
                 Cursor c = db.query(MoodleContract.UserEntry.TABLE_NAME,
-                        new String[]{MoodleContract.UserEntry.COLUMN_MOODLE_URL},
+                        new String[]{MoodleContract.UserEntry.COLUMN_MOODLE_URL, MoodleContract.UserEntry.COLUMN_MOODLE_ID, MoodleContract.UserEntry.COLUMN_TOKEN},
                         null,
                         null,
                         null,
@@ -154,10 +158,16 @@ public class CoursesSectionActivity extends AppCompatActivity implements CourseL
                         null);
                 if (c.getCount() == 0) return null;
                 c.moveToFirst();
-//                String url = c.getString(c.getColumnIndex(MoodleContract.UserEntry.COLUMN_MOODLE_URL));
-//                JSONObject userInfo = MoodleUtils.getUserInfo(url, getContext());
-//                userInfo.
-
+                String url = c.getString(c.getColumnIndex(MoodleContract.UserEntry.COLUMN_MOODLE_URL));
+                String user_id = c.getString(c.getColumnIndex(MoodleContract.UserEntry.COLUMN_MOODLE_ID));
+                String token = c.getString(c.getColumnIndex(MoodleContract.UserEntry.COLUMN_TOKEN));
+                JSONArray course_list = MoodleUtils.getUserCourses(url, user_id, token);
+//
+//                mDb.insert(MoodleContract.CourseEntry.TABLE_NAME,
+//                        null,
+//                        DatabaseUtils.getCourseCV(
+//                                course_list.getString("id")
+//                        ));
 
                 return null;
             }
