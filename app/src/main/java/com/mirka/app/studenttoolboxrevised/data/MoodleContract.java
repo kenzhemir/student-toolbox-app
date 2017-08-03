@@ -11,9 +11,12 @@ public class MoodleContract {
     public static final class UserEntry implements BaseColumns {
         public static final String TABLE_NAME = "user";
         public static final String COLUMN_MOODLE_URL = "moodle_url";
-        public static final String COLUMN_USER_NAME = "username";
+        public static final String COLUMN_MOODLE_ID = "user_id";
+        public static final String COLUMN_USERNAME = "username";
         public static final String COLUMN_PASSWORD = "password";
         public static final String COLUMN_TOKEN = "token";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_SURNAME = "surname";
     }
 
     public static final class CourseEntry implements BaseColumns {

@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLoggedIn() {
         Cursor c = new MoodleDbHelper(this).getWritableDatabase().query(MoodleContract.UserEntry.TABLE_NAME,null,null,null,null,null,null);
-        return c.getCount() != 0;
+        boolean res = c.getCount() != 0;
+        c.close();
+        return res;
     }
 }

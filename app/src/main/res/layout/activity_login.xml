@@ -89,6 +89,12 @@
                 android:text="@string/action_sign_in_short"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/tv_error_display"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                style="@style/ErrorMessage"/>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

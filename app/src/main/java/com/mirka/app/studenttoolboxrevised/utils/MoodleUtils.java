@@ -1,17 +1,7 @@
 package com.mirka.app.studenttoolboxrevised.utils;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Created by Miras on 7/31/2017.
@@ -20,45 +10,62 @@ import okhttp3.Response;
 public class MoodleUtils {
 
 
-    public static String getToken(String moodleURI, String username, String password){
+    /* MOODLE ERRORS */
+    public static final int INVALID_USERNAME = 201;
+    public static final int INVALID_TOKEN = 202;
+    public static final int GENERIC_ERROR = 203;
+
+    public static JSONObject getMoodleResponse(String moodleUrl, String token, String function, String urlParams){
+
+        String serverurl = moodleUrl + "/webservice/rest/server.php?wstoken=" + token + "&wsfunction=" + function + "&moodlewsrestformat=json" + urlParams;
+        JSONObject jsonObject = NetworkUtils.getJsonResponseFromURL(serverurl);
+        if (jsonObject.has("exception")) {
+            try {
+                if (jsonObject.getString("errorcode").equals("invalidtoken")) {
+                    jsonObject = ErrorUtils.buildErrorMessage(INVALID_TOKEN, "Invalid token - token not found");
+                } else {
+                    // TODO add more error types?
+                    jsonObject = ErrorUtils.buildErrorMessage(GENERIC_ERROR, jsonObject.getString("message"));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                try {
+                    jsonObject = ErrorUtils.buildErrorMessage(GENERIC_ERROR, jsonObject.getString("message"));
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                    jsonObject = ErrorUtils.buildErrorMessage(GENERIC_ERROR, "no message");
+                }
+            }
+        }
+        return jsonObject;
+    }
+
+
+    /**
+     *
+     * This function used to get a token from moodle-based website
+     *
+     * @param moodleURI
+     * @param username
+     * @param password
+     * @return
+     */
+    public static JSONObject getToken(String moodleURI, String username, String password){
 
         String url = "https://" + moodleURI + "/login/token.php?username=" + username + "&password=" + password + "&service=moodle_mobile_app";
-        String responseBody;
-        String token = "";
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-
-        try {
-
-            Log.i("TOKEN_RESPONSE", "Sent request");
-            Response response = client.newCall(request).execute();
-            Log.i("TOKEN_RESPONSE", "Got a reponse");
-            if (response.body() != null) {
-                responseBody = response.body().string();
-                Log.i("TOKEN_RESPONSE", responseBody);
-                JSONObject jObject = new JSONObject(responseBody);
-                token = jObject.getString("token");
-            } else {
-                Log.i("TOKEN_RESPONSE", "response body is null");
-                throw new IOException("no response");
+        JSONObject jsonObject = NetworkUtils.getJsonResponseFromURL(url);
+        if (jsonObject.has("error")) {
+            try {
+                jsonObject = ErrorUtils.buildErrorMessage(INVALID_USERNAME, jsonObject.getString("error"));
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException | IOException e) {
-            // TODO Auto-generated catch block
-
-            Log.i("TOKEN_RESPONSE", e.getMessage());
-            e.printStackTrace();
         }
+        return jsonObject;
+    }
 
-        return token;
+    public static JSONObject getUserInfo(String moodleUrl, String token) {
+        return getMoodleResponse(moodleUrl, token, "moodle_webservice_get_siteinfo", "");
     }
 
 }

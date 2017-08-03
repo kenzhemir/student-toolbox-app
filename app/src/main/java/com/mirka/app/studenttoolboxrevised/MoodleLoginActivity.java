@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 
@@ -14,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +22,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mirka.app.studenttoolboxrevised.data.MoodleContract;
 import com.mirka.app.studenttoolboxrevised.data.MoodleDbHelper;
 import com.mirka.app.studenttoolboxrevised.utils.DatabaseUtils;
+import com.mirka.app.studenttoolboxrevised.utils.ErrorUtils;
 import com.mirka.app.studenttoolboxrevised.utils.MoodleUtils;
+import com.mirka.app.studenttoolboxrevised.utils.NetworkUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -53,6 +57,9 @@ public class MoodleLoginActivity extends AppCompatActivity {
     private EditText mMoodleUrlView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView mErrorDisplay;
+
+    private final static String TAG = MoodleLoginActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +67,7 @@ public class MoodleLoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mLoginView = (EditText) findViewById(R.id.login);
-
+        mErrorDisplay = (TextView) findViewById(R.id.tv_error_display);
         mMoodleUrlView = (EditText) findViewById(R.id.moodleURL);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -206,13 +213,14 @@ public class MoodleLoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, String> {
+    public class UserLoginTask extends AsyncTask<Void, Void, JSONObject> {
 
         private final String mURL;
         private final String mLogin;
         private final String mPassword;
         private String mToken;
         private Context mContext;
+
 
         UserLoginTask(Context context, String url, String login, String password) {
             mContext = context;
@@ -223,25 +231,75 @@ public class MoodleLoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            // TODO: register the new account here.
-            return  MoodleUtils.getToken(mURL, mLogin, mPassword);
+        protected JSONObject doInBackground(Void... params) {
+            int id;
+            String name, surname;
+            String url = "http://" + mURL + "/";
+            String token;
+            JSONObject tokenResponse = MoodleUtils.getToken(mURL, mLogin, mPassword);
+            try {
+                token = tokenResponse.getString("token");
+            } catch (JSONException e) {
+                return tokenResponse;
+            }
+
+            JSONObject userInfo = MoodleUtils.getUserInfo(url, token);
+
+            try {
+                // TODO create a class for this stuff
+                id = userInfo.getInt("userid");
+                name = userInfo.getString("firstname");
+                surname = userInfo.getString("lastname");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return userInfo;
+            }
+
+            MoodleDbHelper dbHelper = new MoodleDbHelper(mContext);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            long res = db.insert(MoodleContract.UserEntry.TABLE_NAME, null, DatabaseUtils.getUserCV(id, mURL, mLogin, mPassword, token, name, surname));
+
+            if (res == -1){
+                return ErrorUtils.buildErrorMessage(DatabaseUtils.GENERIC_ERROR, "Error inserting user into the database");
+            }
+
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final String token) {
+        protected void onPostExecute(final JSONObject response) {
             mAuthTask = null;
             showProgress(false);
 
-            if (token != null) {
-                MoodleDbHelper dbHelper = new MoodleDbHelper(mContext);
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                long res = db.insert(MoodleContract.UserEntry.TABLE_NAME, null, DatabaseUtils.getUserCV(mURL, mLogin, mPassword, token));
-                Toast.makeText(mContext, String.valueOf(res), Toast.LENGTH_SHORT).show();
-                //finish();
+            if (response == null) {
+                finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                int status = 0;
+                try {
+                    status = response.getInt(ErrorUtils.STATUS_CODE_KEY);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Cannot get a status code");
+                }
+                switch (status) {
+                    case NetworkUtils.CONNECTION_ERROR:
+                    case NetworkUtils.INVALID_NETWORK_RESPONSE:
+                        mErrorDisplay.setText("Error in network connection");
+                        break;
+                    case MoodleUtils.GENERIC_ERROR:
+                        mErrorDisplay.setText("Internal error");
+                        break;
+                    case MoodleUtils.INVALID_TOKEN:
+                        mErrorDisplay.setText("Auth error");
+                        break;
+                    case MoodleUtils.INVALID_USERNAME:
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                        break;
+                    case DatabaseUtils.GENERIC_ERROR:
+                    default:
+                        mErrorDisplay.setText("Ooops, something went wrong!");
+                }
             }
         }
 

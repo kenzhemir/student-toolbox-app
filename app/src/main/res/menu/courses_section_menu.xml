@@ -4,6 +4,13 @@
     <item
         android:id="@+id/action_sync"
         android:icon="@drawable/ic_sync_white_24dp"
-        app:showAsAction="ifRoom"
-        android:title="@string/action_sync" />
+        android:title="@string/action_sync"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_drop"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="DROP TABLE"
+        app:showAsAction="ifRoom" />
+
 </menu>
